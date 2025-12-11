@@ -1,1 +1,1861 @@
-# Chicken-Jumper
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>🐔 Chicken Jump Adventure</title>
+    <link rel="icon" type="image/png" href="./logo.png.webp">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD166;
+            --secondary: #EF476F;
+            --accent: #06D6A0;
+            --dark: #26547C;
+            --light: #FFFCF9;
+            --grass: #7BC950;
+            --dirt: #B68D40;
+            --sky: #8BD3F7;
+            --shadow: rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            color: var(--dark);
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            max-height: 95vh;
+            background: var(--light);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header - Responsive */
+        .game-header {
+            background: linear-gradient(to right, var(--dark), #3a7bb8);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .logo h1 {
+            font-size: clamp(18px, 4vw, 28px);
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), #FFE8A3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .logo-icon {
+            font-size: clamp(24px, 5vw, 32px);
+            color: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            animation: bounce 2s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .stats {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex: 2;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 80px;
+            flex: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-label {
+            font-size: clamp(10px, 2vw, 14px);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3px;
+            white-space: nowrap;
+        }
+
+        .stat-value {
+            font-size: clamp(18px, 4vw, 28px);
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(12px, 2.5vw, 16px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), #FFB347);
+            color: var(--dark);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Game Area - Responsive */
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 50%;
+            /* 2:1 Aspect Ratio */
+            background: linear-gradient(var(--sky), #B8E2F2);
+            overflow: hidden;
+            flex-grow: 1;
+            min-height: 300px;
+        }
+
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Overlay Screens */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            padding: 15px;
+        }
+
+        .overlay-content {
+            background: linear-gradient(135deg, var(--light), #F5F0E6);
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.5s ease;
+            overflow-y: auto;
+            max-height: 90%;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .overlay-content h2 {
+            font-size: clamp(24px, 5vw, 36px);
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .overlay-content p {
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(14px, 3vw, 18px);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .final-score {
+            font-size: clamp(40px, 10vw, 72px);
+            font-weight: 800;
+            color: var(--secondary);
+            margin: 15px 0;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            line-height: 1;
+        }
+
+        .high-score-badge {
+            background: linear-gradient(to right, gold, #FFD700);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            font-size: clamp(12px, 3vw, 16px);
+        }
+
+        .controls-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 70px;
+        }
+
+        .key {
+            background: var(--dark);
+            color: white;
+            width: clamp(45px, 10vw, 60px);
+            height: clamp(45px, 10vw, 60px);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 700;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .key.space {
+            width: clamp(100px, 20vw, 150px);
+            font-size: clamp(12px, 2.5vw, 16px);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Controls - Always visible on touch devices */
+        .mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .mobile-btn {
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(22px, 5vw, 28px);
+            color: var(--dark);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Footer */
+        .game-footer {
+            padding: 15px 20px;
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            font-family: 'Nunito', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .powerups-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .powerup-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: clamp(11px, 2.5vw, 14px);
+            min-width: 60px;
+        }
+
+        .icon {
+            width: clamp(30px, 8vw, 40px);
+            height: clamp(30px, 8vw, 40px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(16px, 4vw, 20px);
+            color: white;
+        }
+
+        .icon.shield {
+            background: linear-gradient(to right, #4A90E2, #2E5AA6);
+        }
+
+        .icon.double-jump {
+            background: linear-gradient(to right, var(--accent), #00A87E);
+        }
+
+        .icon.slow {
+            background: linear-gradient(to right, #9B59B6, #8E44AD);
+        }
+
+        /* ============ TOUCH DEVICE DETECTION ============ */
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-controls {
+                display: flex;
+            }
+
+            .btn:hover {
+                transform: none;
+            }
+
+            /* Prevent text selection on mobile */
+            .game-container * {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+        }
+
+        /* ============ RESPONSIVE BREAKPOINTS ============ */
+
+        /* Small tablets and large phones */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .game-container {
+                max-height: 100vh;
+                border-radius: 15px;
+            }
+
+            .game-header {
+                padding: 12px 15px;
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+
+            .logo {
+                flex: 1;
+            }
+
+            .stats {
+                flex: 2;
+                gap: 8px;
+            }
+
+            .stat-box {
+                min-width: 70px;
+                padding: 6px 10px;
+            }
+
+            .controls {
+                flex: 1;
+            }
+
+            .game-area {
+                padding-bottom: 60%;
+                /* Taller aspect ratio for mobile */
+                min-height: 250px;
+            }
+
+            .mobile-btn {
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .overlay-content {
+                padding: 20px 15px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .game-header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .logo {
+                order: 1;
+                flex: 1 0 100%;
+                justify-content: center;
+                margin-bottom: 5px;
+            }
+
+            .stats {
+                order: 2;
+                flex: 1 0 100%;
+                justify-content: space-around;
+                margin-bottom: 5px;
+            }
+
+            .controls {
+                order: 3;
+                flex: 1 0 100%;
+                justify-content: center;
+            }
+
+            .stat-box {
+                min-width: 60px;
+                padding: 5px 8px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+            }
+
+            .game-area {
+                padding-bottom: 70%;
+                /* Even taller for very small phones */
+            }
+
+            .mobile-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .mobile-btn {
+                width: 55px;
+                height: 55px;
+            }
+
+            .overlay-content {
+                padding: 15px 10px;
+            }
+
+            .controls-info {
+                gap: 10px;
+            }
+
+            .key {
+                width: 40px;
+                height: 40px;
+            }
+
+            .key.space {
+                width: 80px;
+            }
+        }
+
+        /* Very small phones */
+        @media (max-width: 360px) {
+            .stat-box {
+                min-width: 55px;
+                padding: 4px 6px;
+            }
+
+            .stat-label {
+                font-size: 9px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .game-area {
+                padding-bottom: 80%;
+            }
+
+            .mobile-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-container {
+                max-width: 95vw;
+                max-height: 95vh;
+                flex-direction: row;
+            }
+
+            .game-header {
+                flex-direction: column;
+                width: 180px;
+                padding: 15px;
+                justify-content: flex-start;
+                gap: 15px;
+                flex-shrink: 0;
+            }
+
+            .logo {
+                flex: 0 0 auto;
+            }
+
+            .logo h1 {
+                font-size: 18px;
+                text-align: center;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+                flex: 1;
+            }
+
+            .stat-box {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .game-area {
+                flex: 1;
+                height: auto;
+                padding-bottom: 0;
+            }
+
+            .game-footer {
+                display: none;
+            }
+
+            .mobile-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .mobile-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .overlay-content {
+                max-width: 400px;
+                padding: 20px;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+            .game-container {
+                border-radius: 25px;
+            }
+
+            .stat-box,
+            .btn,
+            .key,
+            .mobile-btn {
+                border-radius: 15px;
+            }
+        }
+
+        /* Prevent overscroll on iOS */
+        .game-container {
+            overscroll-behavior: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <!-- Game Header -->
+        <div class="game-header">
+            <div class="logo">
+                <div class="logo-icon">🐔</div>
+                <h1>Chicken Jump</h1>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">SCORE</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">HIGH SCORE</div>
+                    <div class="stat-value" id="high-score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">SPEED</div>
+                    <div class="stat-value" id="speed">1.0x</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" id="pause-btn">
+                    <i class="fas fa-pause"></i> <span>Pause</span>
+                </button>
+                <button class="btn btn-primary" id="restart-btn">
+                    <i class="fas fa-redo"></i> <span>Restart</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <canvas id="game-canvas"></canvas>
+
+            <!-- Start Screen -->
+            <div class="overlay" id="start-screen">
+                <div class="overlay-content">
+                    <h2><span>🐔</span> Chicken Jump</h2>
+                    <p>Help Chicken run as far as possible! Jump over obstacles and collect power-ups.</p>
+
+                    <div class="controls-info">
+                        <div class="control-item">
+                            <div class="key"><i class="fas fa-arrow-up"></i></div>
+                            <span>JUMP</span>
+                        </div>
+                        <div class="control-item">
+                            <div class="key space">SPACE</div>
+                            <span>JUMP</span>
+                        </div>
+                    </div>
+
+                    <div class="powerups-info">
+                        <div class="powerup-icon">
+                            <div class="icon shield"><i class="fas fa-shield-alt"></i></div>
+                            <span>Shield</span>
+                        </div>
+                        <div class="powerup-icon">
+                            <div class="icon double-jump"><i class="fas fa-angle-double-up"></i></div>
+                            <span>Double Jump</span>
+                        </div>
+                        <div class="powerup-icon">
+                            <div class="icon slow"><i class="fas fa-hourglass-half"></i></div>
+                            <span>Slow Motion</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="start-btn" style="margin-top: 20px; padding: 12px 30px;">
+                        <i class="fas fa-play"></i> START GAME
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div class="overlay hidden" id="game-over-screen">
+                <div class="overlay-content">
+                    <h2><span>😢</span> Game Over!</h2>
+                    <p>Chicken couldn't make it past the obstacles...</p>
+
+                    <div class="final-score" id="final-score">0</div>
+
+                    <div id="new-high-score" class="hidden">
+                        <div class="high-score-badge">
+                            <i class="fas fa-trophy"></i> NEW HIGH SCORE!
+                        </div>
+                    </div>
+
+                    <p>Your high score: <strong id="display-high-score">0</strong></p>
+
+                    <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="play-again-btn">
+                            <i class="fas fa-redo"></i> Play Again
+                        </button>
+                        <button class="btn btn-secondary" id="menu-btn">
+                            <i class="fas fa-home"></i> Main Menu
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div class="mobile-controls">
+                <button class="mobile-btn" id="mobile-jump">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="game-footer">
+            <p>Made with <i class="fas fa-heart" style="color: #ff4757;"></i> - Collect power-ups!</p>
+            <div class="powerups-info">
+                <div class="powerup-icon">
+                    <div class="icon shield"><i class="fas fa-shield-alt"></i></div>
+                    <span>Invincibility 5s</span>
+                </div>
+                <div class="powerup-icon">
+                    <div class="icon double-jump"><i class="fas fa-angle-double-up"></i></div>
+                    <span>Double jump</span>
+                </div>
+                <div class="powerup-icon">
+                    <div class="icon slow"><i class="fas fa-hourglass-half"></i></div>
+                    <span>Slow motion 3s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================
+        // GAME INITIALIZATION
+        // ====================
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Detect touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        // Set canvas size based on container
+        function resizeCanvas() {
+            const container = document.querySelector('.game-area');
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+
+            // Set canvas dimensions to match container
+            canvas.width = containerWidth;
+            canvas.height = containerHeight;
+
+            // Update ground position based on new height
+            ground.y = canvas.height - (canvas.height * 0.2); // 20% from bottom
+            ground.height = canvas.height * 0.2; // 20% height
+
+            // Update player position and size
+            player.width = Math.max(30, canvas.width * 0.05);
+            player.height = player.width * 1.2;
+            player.x = canvas.width * 0.15;
+
+            // Update player position
+            if (game.running && !game.gameOver) {
+                player.y = ground.y - player.height;
+            }
+
+            // Redraw if game is running
+            if (game.running && !game.paused) {
+                draw();
+            }
+        }
+
+        // UI Elements
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
+        const speedElement = document.getElementById('speed');
+        const finalScoreElement = document.getElementById('final-score');
+        const displayHighScoreElement = document.getElementById('display-high-score');
+        const newHighScoreElement = document.getElementById('new-high-score');
+
+        // Screens
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+
+        // Buttons
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileJumpBtn = document.getElementById('mobile-jump');
+
+        // Game State
+        let game = {
+            running: false,
+            paused: false,
+            gameOver: false,
+            score: 0,
+            highScore: localStorage.getItem('chickenHighScore') || 0,
+            speed: 1.0,
+            baseSpeed: 5,
+            lastTime: 0,
+            deltaTime: 0,
+            animationId: null,
+            particles: []
+        };
+
+        // Player
+        const player = {
+            x: 150,
+            y: 0,
+            width: 50,
+            height: 60,
+            velocityY: 0,
+            jumpForce: 16,
+            gravity: 0.7,
+            grounded: false,
+            color: '#FFD166',
+            isJumping: false,
+            powerUps: {
+                shield: { active: false, duration: 0, maxDuration: 5000 },
+                doubleJump: { active: false, duration: 0, maxDuration: 8000, jumpsLeft: 1 },
+                slowMotion: { active: false, duration: 0, maxDuration: 3000 }
+            }
+        };
+
+        // Ground
+        const ground = {
+            y: 400,
+            height: 100
+        };
+
+        // Obstacles
+        let obstacles = [];
+        let obstacleTimer = 0;
+        let obstacleInterval = 1500;
+
+        // Power-ups
+        let powerUps = [];
+        let powerUpTimer = 0;
+        let powerUpInterval = 8000;
+
+        // Cloud backgrounds
+        let clouds = [
+            { x: 200, y: 80, width: 120, speed: 0.3 },
+            { x: 500, y: 120, width: 100, speed: 0.4 },
+            { x: 800, y: 60, width: 150, speed: 0.2 },
+            { x: 1100, y: 100, width: 90, speed: 0.5 }
+        ];
+
+        // Initialize
+        function init() {
+            // Set high score
+            highScoreElement.textContent = game.highScore;
+            displayHighScoreElement.textContent = game.highScore;
+
+            // Initial canvas resize
+            resizeCanvas();
+
+            // Event Listeners
+            startBtn.addEventListener('click', startGame);
+            pauseBtn.addEventListener('click', togglePause);
+            restartBtn.addEventListener('click', restartGame);
+            playAgainBtn.addEventListener('click', restartGame);
+            menuBtn.addEventListener('click', showMainMenu);
+            mobileJumpBtn.addEventListener('click', jump);
+
+            // Touch events for mobile jump button
+            mobileJumpBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                jump();
+                mobileJumpBtn.style.transform = 'scale(0.9)';
+            });
+
+            mobileJumpBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                mobileJumpBtn.style.transform = 'scale(1)';
+            });
+
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if ((e.code === 'Space' || e.code === 'ArrowUp') && !game.gameOver) {
+                    e.preventDefault();
+                    if (!game.running) {
+                        startGame();
+                    } else {
+                        jump();
+                    }
+                }
+
+                if (e.code === 'KeyP') {
+                    togglePause();
+                }
+
+                if (e.code === 'Escape' && game.gameOver) {
+                    showMainMenu();
+                }
+            });
+
+            // Prevent space bar scrolling
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && e.target === document.body) {
+                    e.preventDefault();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+
+            // Prevent pull-to-refresh on mobile
+            document.addEventListener('touchmove', (e) => {
+                if (game.running && !game.paused) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Set initial player position
+            player.y = ground.y - player.height;
+
+            // Create initial particles
+            createParticles(10);
+
+            // Draw initial screen
+            draw();
+        }
+
+        // ====================
+        // GAME FUNCTIONS
+        // ====================
+
+        function startGame() {
+            game.running = true;
+            game.paused = false;
+            game.gameOver = false;
+            game.score = 0;
+            game.speed = 1.0;
+
+            // Reset player size based on current canvas
+            player.width = Math.max(30, canvas.width * 0.05);
+            player.height = player.width * 1.2;
+            player.x = canvas.width * 0.15;
+
+            // Reset player
+            player.y = ground.y - player.height;
+            player.velocityY = 0;
+            player.grounded = true;
+            player.isJumping = false;
+
+            // Reset power-ups
+            for (let key in player.powerUps) {
+                player.powerUps[key].active = false;
+                player.powerUps[key].duration = 0;
+            }
+
+            // Clear arrays
+            obstacles = [];
+            powerUps = [];
+
+            // Reset clouds position
+            clouds = [
+                { x: 200, y: 80, width: 120, speed: 0.3 },
+                { x: 500, y: 120, width: 100, speed: 0.4 },
+                { x: 800, y: 60, width: 150, speed: 0.2 },
+                { x: 1100, y: 100, width: 90, speed: 0.5 }
+            ];
+
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+
+            // Update UI
+            scoreElement.textContent = '0';
+            speedElement.textContent = '1.0x';
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+
+            // Start game loop
+            game.lastTime = performance.now();
+            game.animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop(currentTime) {
+            if (!game.running || game.paused) return;
+
+            // Calculate delta time
+            game.deltaTime = currentTime - game.lastTime;
+            game.lastTime = currentTime;
+
+            // Update game state
+            update(game.deltaTime);
+
+            // Render game
+            draw();
+
+            // Continue loop
+            game.animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            // Update player physics
+            updatePlayer(dt);
+
+            // Update obstacles
+            updateObstacles(dt);
+
+            // Update power-ups
+            updatePowerUps(dt);
+
+            // Update clouds
+            updateClouds(dt);
+
+            // Update particles
+            updateParticles(dt);
+
+            // Update active power-ups
+            updateActivePowerUps(dt);
+
+            // Spawn obstacles
+            obstacleTimer += dt;
+            if (obstacleTimer > obstacleInterval) {
+                spawnObstacle();
+                obstacleTimer = 0;
+                // Decrease interval as score increases
+                obstacleInterval = Math.max(700, 1500 - Math.floor(game.score / 100) * 50);
+            }
+
+            // Spawn power-ups
+            powerUpTimer += dt;
+            if (powerUpTimer > powerUpInterval && Math.random() < 0.3) {
+                spawnPowerUp();
+                powerUpTimer = 0;
+            }
+
+            // Increase score
+            game.score += dt * 0.02 * game.speed;
+            scoreElement.textContent = Math.floor(game.score);
+
+            // Increase difficulty
+            game.speed = 1.0 + Math.min(2.0, game.score / 2000);
+            speedElement.textContent = game.speed.toFixed(1) + 'x';
+
+            // Check collisions
+            checkCollisions();
+        }
+
+        function updatePlayer(dt) {
+            // Apply gravity
+            player.velocityY += player.gravity;
+            player.y += player.velocityY;
+
+            // Ground collision
+            if (player.y + player.height >= ground.y) {
+                player.y = ground.y - player.height;
+                player.velocityY = 0;
+                player.grounded = true;
+                player.isJumping = false;
+
+                // Reset double jump if active
+                if (player.powerUps.doubleJump.active) {
+                    player.powerUps.doubleJump.jumpsLeft = 1;
+                }
+            } else {
+                player.grounded = false;
+            }
+
+            // Limit jump height
+            const maxJumpHeight = ground.y - player.height - 250;
+            if (player.y < maxJumpHeight) {
+                player.y = maxJumpHeight;
+                player.velocityY = 0;
+            }
+        }
+
+        function jump() {
+            if (!game.running || game.gameOver || game.paused) return;
+
+            // Regular jump if grounded
+            if (player.grounded) {
+                player.velocityY = -player.jumpForce;
+                player.isJumping = true;
+                createJumpParticles();
+            }
+            // Double jump if power-up is active and has jumps left
+            else if (player.powerUps.doubleJump.active && player.powerUps.doubleJump.jumpsLeft > 0) {
+                player.velocityY = -player.jumpForce * 0.9;
+                player.powerUps.doubleJump.jumpsLeft--;
+                createJumpParticles();
+            }
+        }
+
+        function updateObstacles(dt) {
+            const speed = game.baseSpeed * game.speed * (player.powerUps.slowMotion.active ? 0.5 : 1);
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= speed;
+
+                // Remove if off screen
+                if (obstacles[i].x + obstacles[i].width < -50) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        function spawnObstacle() {
+            const baseSize = Math.min(canvas.width * 0.045, 45);
+            const types = [
+                { name: 'rock', width: baseSize, height: baseSize, color: '#8B7355' },
+                { name: 'log', width: baseSize * 1.8, height: baseSize * 0.9, color: '#8B4513' },
+                { name: 'fence', width: baseSize * 0.8, height: baseSize * 1.6, color: '#DEB887' },
+                { name: 'bush', width: baseSize * 1.3, height: baseSize * 1.1, color: '#2E8B57' }
+            ];
+
+            const type = types[Math.floor(Math.random() * types.length)];
+            const y = ground.y - type.height;
+
+            obstacles.push({
+                x: canvas.width,
+                y: y,
+                width: type.width,
+                height: type.height,
+                color: type.color,
+                name: type.name
+            });
+        }
+
+        function updatePowerUps(dt) {
+            const speed = game.baseSpeed * game.speed * (player.powerUps.slowMotion.active ? 0.5 : 1);
+
+            for (let i = powerUps.length - 1; i >= 0; i--) {
+                powerUps[i].x -= speed;
+
+                // Remove if off screen
+                if (powerUps[i].x + 30 < -50) {
+                    powerUps.splice(i, 1);
+                }
+            }
+        }
+
+        function spawnPowerUp() {
+            const types = [
+                { name: 'shield', color: '#4A90E2', icon: '🛡️' },
+                { name: 'doubleJump', color: '#06D6A0', icon: '⚡' },
+                { name: 'slowMotion', color: '#9B59B6', icon: '🐌' }
+            ];
+
+            const type = types[Math.floor(Math.random() * types.length)];
+            const y = ground.y - 100 + Math.random() * 80;
+
+            powerUps.push({
+                x: canvas.width,
+                y: y,
+                width: Math.max(25, canvas.width * 0.03),
+                height: Math.max(25, canvas.width * 0.03),
+                color: type.color,
+                name: type.name,
+                icon: type.icon
+            });
+        }
+
+        function updateActivePowerUps(dt) {
+            for (let key in player.powerUps) {
+                if (player.powerUps[key].active) {
+                    player.powerUps[key].duration += dt;
+
+                    // Deactivate if duration exceeded
+                    if (player.powerUps[key].duration > player.powerUps[key].maxDuration) {
+                        player.powerUps[key].active = false;
+                        player.powerUps[key].duration = 0;
+
+                        // Special reset for double jump
+                        if (key === 'doubleJump') {
+                            player.powerUps.doubleJump.jumpsLeft = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        function checkCollisions() {
+            // Player collision box (smaller than visual)
+            const playerBox = {
+                x: player.x + player.width * 0.2,
+                y: player.y + player.height * 0.2,
+                width: player.width * 0.6,
+                height: player.height * 0.6
+            };
+
+            // Check obstacle collisions (skip if shield is active)
+            if (!player.powerUps.shield.active) {
+                for (let obstacle of obstacles) {
+                    const obstacleBox = {
+                        x: obstacle.x,
+                        y: obstacle.y,
+                        width: obstacle.width,
+                        height: obstacle.height
+                    };
+
+                    if (isColliding(playerBox, obstacleBox)) {
+                        gameOver();
+                        return;
+                    }
+                }
+            }
+
+            // Check power-up collisions
+            for (let i = powerUps.length - 1; i >= 0; i--) {
+                const powerUp = powerUps[i];
+                const powerUpBox = {
+                    x: powerUp.x,
+                    y: powerUp.y,
+                    width: powerUp.width,
+                    height: powerUp.height
+                };
+
+                if (isColliding(playerBox, powerUpBox)) {
+                    collectPowerUp(powerUp);
+                    powerUps.splice(i, 1);
+                    createPowerUpParticles(powerUp);
+                }
+            }
+        }
+
+        function isColliding(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.y + rect1.height > rect2.y;
+        }
+
+        function collectPowerUp(powerUp) {
+            // Activate power-up
+            player.powerUps[powerUp.name].active = true;
+            player.powerUps[powerUp.name].duration = 0;
+
+            // Add score bonus
+            game.score += 100;
+
+            // Create visual feedback
+            createCollectParticles(powerUp);
+        }
+
+        function gameOver() {
+            game.running = false;
+            game.gameOver = true;
+
+            // Cancel animation frame
+            if (game.animationId) {
+                cancelAnimationFrame(game.animationId);
+            }
+
+            // Update high score
+            const finalScore = Math.floor(game.score);
+            finalScoreElement.textContent = finalScore;
+
+            if (finalScore > game.highScore) {
+                game.highScore = finalScore;
+                localStorage.setItem('chickenHighScore', game.highScore);
+                newHighScoreElement.classList.remove('hidden');
+            }
+
+            // Update UI
+            highScoreElement.textContent = game.highScore;
+            displayHighScoreElement.textContent = game.highScore;
+
+            // Show game over screen
+            setTimeout(() => {
+                gameOverScreen.classList.remove('hidden');
+            }, 500);
+        }
+
+        function togglePause() {
+            if (!game.running || game.gameOver) return;
+
+            game.paused = !game.paused;
+
+            if (game.paused) {
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>Resume</span>';
+                if (game.animationId) {
+                    cancelAnimationFrame(game.animationId);
+                    game.animationId = null;
+                }
+            } else {
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+                game.lastTime = performance.now();
+                game.animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function restartGame() {
+            // Cancel any existing animation
+            if (game.animationId) {
+                cancelAnimationFrame(game.animationId);
+            }
+
+            // Start new game
+            startGame();
+        }
+
+        function showMainMenu() {
+            // Cancel any existing animation
+            if (game.animationId) {
+                cancelAnimationFrame(game.animationId);
+            }
+
+            game.running = false;
+            game.paused = false;
+            game.gameOver = false;
+
+            // Show start screen
+            gameOverScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+
+            // Reset pause button
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+        }
+
+        // ====================
+        // RENDERING
+        // ====================
+
+        function draw() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw sky gradient
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, ground.y);
+            skyGradient.addColorStop(0, '#8BD3F7');
+            skyGradient.addColorStop(1, '#B8E2F2');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, ground.y);
+
+            // Draw clouds
+            drawClouds();
+
+            // Draw distant hills
+            drawHills();
+
+            // Draw ground
+            drawGround();
+
+            // Draw obstacles
+            drawObstacles();
+
+            // Draw power-ups
+            drawPowerUps();
+
+            // Draw player
+            drawPlayer();
+
+            // Draw particles
+            drawParticles();
+
+            // Draw power-up indicators
+            drawPowerUpIndicators();
+
+            // Draw shield if active
+            if (player.powerUps.shield.active) {
+                drawShield();
+            }
+        }
+
+        function drawClouds() {
+            for (let cloud of clouds) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+
+                // Draw fluffy cloud
+                const cloudWidth = cloud.width * (canvas.width / 1000);
+                ctx.arc(cloud.x, cloud.y, cloudWidth / 4, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloudWidth / 3, cloud.y - 10, cloudWidth / 5, 0, Math.PI * 2);
+                ctx.arc(cloud.x - cloudWidth / 3, cloud.y, cloudWidth / 6, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloudWidth / 2, cloud.y + 5, cloudWidth / 4.5, 0, Math.PI * 2);
+
+                ctx.fill();
+            }
+        }
+
+        function updateClouds(dt) {
+            for (let cloud of clouds) {
+                cloud.x -= cloud.speed * game.speed;
+
+                // Reset if off screen
+                if (cloud.x + cloud.width < -100) {
+                    cloud.x = canvas.width + 100;
+                    cloud.y = 40 + Math.random() * 100;
+                    cloud.width = 80 + Math.random() * 70;
+                }
+            }
+        }
+
+        function drawHills() {
+            // Distant hills
+            ctx.fillStyle = 'rgba(100, 150, 100, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(canvas.width * 0.3, ground.y - 50, canvas.width * 0.25, 80, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.ellipse(canvas.width * 0.7, ground.y - 80, canvas.width * 0.3, 100, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Closer hills
+            ctx.fillStyle = 'rgba(120, 180, 120, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(canvas.width * 0.15, ground.y - 30, canvas.width * 0.2, 60, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawGround() {
+            // Main ground
+            const groundGradient = ctx.createLinearGradient(0, ground.y, 0, canvas.height);
+            groundGradient.addColorStop(0, '#B68D40');
+            groundGradient.addColorStop(1, '#8B7355');
+            ctx.fillStyle = groundGradient;
+            ctx.fillRect(0, ground.y, canvas.width, ground.height);
+
+            // Grass on top
+            ctx.fillStyle = '#7BC950';
+            ctx.fillRect(0, ground.y, canvas.width, canvas.height * 0.02);
+
+            // Ground details
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            for (let i = 0; i < canvas.width; i += canvas.width * 0.04) {
+                ctx.fillRect(i, ground.y + canvas.height * 0.02, canvas.width * 0.02, canvas.height * 0.005);
+            }
+        }
+
+        function drawPlayer() {
+            const x = player.x;
+            const y = player.y;
+            const w = player.width;
+            const h = player.height;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(x + w / 2, ground.y + 5, w / 2, w / 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Wing
+            ctx.fillStyle = '#FFC145';
+            ctx.beginPath();
+            ctx.ellipse(x + w / 3, y + h / 1.8, w / 4, h / 4, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Head
+            ctx.fillStyle = '#FFB347';
+            ctx.beginPath();
+            ctx.arc(x + w / 1.3, y + h / 3, w / 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Beak
+            ctx.fillStyle = '#FF9500';
+            ctx.beginPath();
+            ctx.moveTo(x + w / 1.1, y + h / 3);
+            ctx.lineTo(x + w + w * 0.2, y + h / 3);
+            ctx.lineTo(x + w / 1.1, y + h / 2.2);
+            ctx.fill();
+
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(x + w / 1.15, y + h / 3.5, w / 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#FFF';
+            ctx.beginPath();
+            ctx.arc(x + w / 1.12, y + h / 3.7, w / 24, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Comb
+            ctx.fillStyle = '#EF476F';
+            ctx.beginPath();
+            ctx.moveTo(x + w / 1.4, y + h / 4.5);
+            ctx.lineTo(x + w / 1.3, y + h / 6);
+            ctx.lineTo(x + w / 1.2, y + h / 4.5);
+            ctx.fill();
+
+            // Legs when grounded
+            if (player.grounded) {
+                ctx.fillStyle = '#FF9500';
+                ctx.fillRect(x + w / 3, y + h - h * 0.08, w / 8, h / 4);
+                ctx.fillRect(x + 2 * w / 3, y + h - h * 0.08, w / 8, h / 4);
+            }
+        }
+
+        function drawObstacles() {
+            for (let obstacle of obstacles) {
+                ctx.fillStyle = obstacle.color;
+
+                if (obstacle.name === 'rock') {
+                    // Draw rock
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        obstacle.x + obstacle.width / 2,
+                        obstacle.y + obstacle.height / 2,
+                        obstacle.width / 2,
+                        obstacle.height / 2,
+                        0, 0, Math.PI * 2
+                    );
+                    ctx.fill();
+
+                    // Rock details
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        obstacle.x + obstacle.width / 3,
+                        obstacle.y + obstacle.height / 3,
+                        obstacle.width / 6,
+                        obstacle.height / 6,
+                        0, 0, Math.PI * 2
+                    );
+                    ctx.fill();
+                } else if (obstacle.name === 'log') {
+                    // Draw log
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+                    // Log rings
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.ellipse(
+                            obstacle.x + (i + 1) * obstacle.width / 4,
+                            obstacle.y + obstacle.height / 2,
+                            obstacle.width / 8,
+                            2,
+                            0, 0, Math.PI * 2
+                        );
+                        ctx.fill();
+                    }
+                } else {
+                    // Default rectangle for fence, bush, etc.
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+                    // Add some texture
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    ctx.fillRect(obstacle.x + 5, obstacle.y + 5, obstacle.width - 10, obstacle.height - 10);
+                }
+            }
+        }
+
+        function drawPowerUps() {
+            for (let powerUp of powerUps) {
+                // Glow effect
+                ctx.shadowColor = powerUp.color;
+                ctx.shadowBlur = 15;
+
+                // Main circle
+                ctx.fillStyle = powerUp.color;
+                ctx.beginPath();
+                ctx.arc(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2, powerUp.width / 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Icon
+                ctx.fillStyle = '#FFF';
+                ctx.font = `${Math.max(16, powerUp.width * 0.6)}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(powerUp.icon, powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2);
+
+                // Reset shadow
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function drawPowerUpIndicators() {
+            const indicators = [];
+
+            // Add active power-ups to indicators
+            for (let key in player.powerUps) {
+                if (player.powerUps[key].active) {
+                    indicators.push({
+                        name: key,
+                        duration: player.powerUps[key].duration,
+                        maxDuration: player.powerUps[key].maxDuration
+                    });
+                }
+            }
+
+            // Draw indicators
+            const startX = canvas.width * 0.02;
+            const startY = canvas.height * 0.02;
+            const indicatorSize = Math.min(30, canvas.width * 0.03);
+            const spacing = 10;
+
+            for (let i = 0; i < indicators.length; i++) {
+                const indicator = indicators[i];
+                const x = startX;
+                const y = startY + i * (indicatorSize + spacing);
+
+                // Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(x, y, indicatorSize, indicatorSize);
+
+                // Icon
+                let icon = '';
+                let color = '';
+
+                switch (indicator.name) {
+                    case 'shield':
+                        icon = '🛡️';
+                        color = '#4A90E2';
+                        break;
+                    case 'doubleJump':
+                        icon = '⚡';
+                        color = '#06D6A0';
+                        break;
+                    case 'slowMotion':
+                        icon = '🐌';
+                        color = '#9B59B6';
+                        break;
+                }
+
+                ctx.fillStyle = color;
+                ctx.font = `${Math.max(16, indicatorSize * 0.6)}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(icon, x + indicatorSize / 2, y + indicatorSize / 2);
+
+                // Timer bar
+                const progress = 1 - (indicator.duration / indicator.maxDuration);
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y + indicatorSize + 2, indicatorSize * progress, 4);
+            }
+        }
+
+        function drawShield() {
+            const x = player.x + player.width / 2;
+            const y = player.y + player.height / 2;
+            const radius = Math.max(player.width, player.height) / 2 + 10;
+
+            // Pulsing shield effect
+            const pulse = Math.sin(Date.now() / 200) * 3 + radius;
+
+            ctx.strokeStyle = 'rgba(74, 144, 226, 0.7)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x, y, pulse, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner shield
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // ====================
+        // PARTICLE SYSTEM
+        // ====================
+
+        function createParticles(count) {
+            for (let i = 0; i < count; i++) {
+                game.particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * ground.y,
+                    size: Math.random() * 4 + 1,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25,
+                    color: `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`,
+                    life: 1
+                });
+            }
+        }
+
+        function createJumpParticles() {
+            for (let i = 0; i < 15; i++) {
+                game.particles.push({
+                    x: player.x + player.width / 2,
+                    y: player.y + player.height,
+                    size: Math.random() * 5 + 2,
+                    speedX: Math.random() * 4 - 2,
+                    speedY: Math.random() * -3 - 2,
+                    color: `rgba(255, 209, 102, ${Math.random() * 0.7 + 0.3})`,
+                    life: 1,
+                    decay: 0.03
+                });
+            }
+        }
+
+        function createPowerUpParticles(powerUp) {
+            for (let i = 0; i < 25; i++) {
+                game.particles.push({
+                    x: powerUp.x + powerUp.width / 2,
+                    y: powerUp.y + powerUp.height / 2,
+                    size: Math.random() * 6 + 3,
+                    speedX: Math.random() * 6 - 3,
+                    speedY: Math.random() * 6 - 3,
+                    color: powerUp.color,
+                    life: 1,
+                    decay: 0.02
+                });
+            }
+        }
+
+        function createCollectParticles(powerUp) {
+            for (let i = 0; i < 30; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 3 + 1;
+
+                game.particles.push({
+                    x: player.x + player.width / 2,
+                    y: player.y + player.height / 2,
+                    size: Math.random() * 4 + 2,
+                    speedX: Math.cos(angle) * speed,
+                    speedY: Math.sin(angle) * speed,
+                    color: powerUp.color,
+                    life: 1,
+                    decay: 0.02
+                });
+            }
+        }
+
+        function updateParticles(dt) {
+            for (let i = game.particles.length - 1; i >= 0; i--) {
+                const p = game.particles[i];
+
+                // Update position
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                // Apply gravity to some particles
+                if (p.speedY < 5) {
+                    p.speedY += 0.1;
+                }
+
+                // Update life
+                if (p.decay) {
+                    p.life -= p.decay;
+                }
+
+                // Remove dead particles
+                if (p.life <= 0 || p.y > canvas.height || p.x < -50 || p.x > canvas.width + 50) {
+                    game.particles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawParticles() {
+            for (let p of game.particles) {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // ====================
+        // INITIALIZE GAME
+        // ====================
+
+        // Start the game when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>
